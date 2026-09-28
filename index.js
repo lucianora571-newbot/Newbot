@@ -14,9 +14,11 @@ const defaults = {
 let db = fs.existsSync(DATA) ? JSON.parse(fs.readFileSync(DATA)) : defaults;
 function save(){ fs.writeFileSync(DATA, JSON.stringify(db,null,2)); }
 
+// O bot usa slash commands e botões, então o intent Guilds é suficiente.
+// Removemos GuildMembers/GuildMessages para evitar o erro
+// "Used disallowed intents" na Railway.
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages],
-  partials: [Partials.Channel]
+  intents: [GatewayIntentBits.Guilds]
 });
 client.commands = new Collection();
 
