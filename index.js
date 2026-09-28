@@ -20,9 +20,53 @@ const client = new Client({
 });
 client.commands = new Collection();
 
-for (const file of fs.readdirSync(path.join(__dirname,'commands')).filter(x=>x.endsWith('.js'))) {
-  const c=require(path.join(__dirname,'commands',file));
-  client.commands.set(c.data.name,c);
+// Carrega comandos externos somente se a pasta /commands existir.
+// Isso evita o crash ENOENT da Railway quando a pasta não foi enviada.
+const commandsDir = path.join(__dirname, 'commands');
+
+if (fs.existsSync(commandsDir) && fs.statSync(commandsDir).isDirectory()) {
+  for (const file of fs.readdirSync(commandsDir).filter(x => x.endsWith('.js'))) {
+    try {
+      const c = require(path.join(commandsDir, file));
+
+      if (!c?.data?.name || typeof c.execute !== 'function') {
+        console.warn(`Comando ignorado (formato inválido): ${file}`);
+        continue;
+      }
+
+      client.commands.set(c.data.name, c);
+    } catch (err) {
+      console.error(`Erro ao carregar comando ${file}:`, err);
+    }
+  }
+} else {
+  console.warn('Pasta /commands não encontrada. O bot iniciará sem comandos externos.');
+}
+
+// Comandos mínimos para confirmar que o deploy está funcionando.
+if (!client.commands.has('ping')) {
+  client.commands.set('ping', {
+    data: {
+      name: 'ping',
+      description: 'Verifica se o bot está online.'
+    },
+    execute: async (i) => {
+      await i.reply(`🏓 Pong! ${client.ws.ping}ms`);
+    }
+  });
+}
+
+if (!client.commands.has('status')) {
+  client.commands.set('status', {
+    data: {
+      name: 'status',
+      description: 'Mostra o status da loja.'
+    },
+    execute: async (i, { db }) => {
+      const loja = db.maintenance ? '🛠️ Em manutenção' : (db.mode === 'on' ? '🟢 Online' : '🔴 Offline');
+      await i.reply(`**Status da loja:** ${loja}`);
+    }
+  });
 }
 
 client.once('ready', async ()=>{
@@ -77,5 +121,13 @@ client.on('interactionCreate', async i=>{
     if(!i.replied && !i.deferred) await i.reply({content:'❌ Erro interno.',ephemeral:true}).catch(()=>{});
   }
 });
+
+const requiredEnv = ['DISCORD_TOKEN', 'CLIENT_ID', 'GUILD_ID'];
+const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+
+if (missingEnv.length) {
+  console.error(`Variáveis de ambiente ausentes: ${missingEnv.join(', ')}`);
+  process.exit(1);
+}
 
 client.login(process.env.DISCORD_TOKEN);
