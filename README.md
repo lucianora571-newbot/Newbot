@@ -1,25 +1,28 @@
-# Bot Discord — Loja
-Bot base em Node.js + discord.js v14, com moderação, tickets, restock, status, modos da loja, PIX e avaliações.
+# Bot Loja Discord — Completo
+Node.js + discord.js v14.
 
-## Requisitos
-- Node.js 20+
-- Uma aplicação/bot criada no Discord Developer Portal
+## Recursos
+- Moderação: ban, kick e limpar
+- Painel de tickets com abertura/fechamento por botão
+- Produtos e estoque
+- Restock com aviso automático no canal configurado
+- Ping de restock
+- Ping/status
+- Loja ON/OFF/manutenção
+- Anti-Raid ON/OFF (base para expansão)
+- Configuração PIX
+- Painel de avaliação 1–5 estrelas
+- Registro de entrega e avaliação
+- Configuração de canais/cargos
+- Registro automático dos slash commands no servidor informado
 
-## Instalação
-1. `npm install`
-2. Copie `.env.example` para `.env`
-3. Preencha `DISCORD_TOKEN`, `CLIENT_ID` e `GUILD_ID`
-4. `npm start`
+## Railway
+Variables:
+DISCORD_TOKEN
+CLIENT_ID
+GUILD_ID
 
-## Comandos
-- `/ping`
-- `/config`
-- `/moderacao`
-- `/ticket`
-- `/produto`
-- `/restock`
-- `/loja`
-- `/pix`
-- `/avaliacao`
+Start Command:
+npm start
 
-O projeto usa armazenamento JSON local em `data/`. Para produção, troque por um banco de dados.
+Não coloque o token dentro do GitHub.

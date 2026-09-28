@@ -1,0 +1,19 @@
+{
+  "mode": "on",
+  "maintenance": false,
+  "antiRaid": true,
+  "pix": {
+    "key": "",
+    "name": ""
+  },
+  "channels": {
+    "restock": "",
+    "reviews": "",
+    "logs": ""
+  },
+  "roles": {
+    "restockPing": "",
+    "support": ""
+  },
+  "products": {}
+}
